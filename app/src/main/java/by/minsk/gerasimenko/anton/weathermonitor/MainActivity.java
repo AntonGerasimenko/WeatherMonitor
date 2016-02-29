@@ -122,7 +122,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
                 if (woeid.equals(city.getWoeid())) {
 
-                    city.setForecastModel(model);
                     fragment.updateList();
                     return;
                 }

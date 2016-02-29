@@ -14,6 +14,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import by.minsk.gerasimenko.anton.weathermonitor.DB.DBService;
 import by.minsk.gerasimenko.anton.weathermonitor.DB.model.ForecastModel;
 import by.minsk.gerasimenko.anton.weathermonitor.R;
 import by.minsk.gerasimenko.anton.weathermonitor.DB.model.CityModel;
@@ -48,7 +49,9 @@ public class CityListApadter extends ArrayAdapter<CityModel>{
         holder.tvCity.setText(city.getCity());
         holder.tvDistance.setText(String.format("%.1f km", city.getDistance()));
 
-        List<ForecastModel> list = city.getForecastModel();
+        List<ForecastModel> list = DBService.getForecast(city);
+
+
         if (list != null && !list.isEmpty()) {
 
             ForecastModel model = list.get(0);

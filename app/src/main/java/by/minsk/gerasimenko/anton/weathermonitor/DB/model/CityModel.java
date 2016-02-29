@@ -1,5 +1,7 @@
 package by.minsk.gerasimenko.anton.weathermonitor.DB.model;
 
+import com.j256.ormlite.dao.ForeignCollection;
+import com.j256.ormlite.dao.LazyForeignCollection;
 import com.j256.ormlite.field.DataType;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.field.ForeignCollectionField;
@@ -24,8 +26,8 @@ public class CityModel implements Serializable, Comparable<CityModel> {
 
     private float distance;
 
-    @ForeignCollectionField(eager = false)
-    private Collection<ForecastModel> forecastModel;
+   /* @ForeignCollectionField(eager = false)
+    private ForeignCollection<ForecastModel> forecastModel;*/
 
 
     public float getDistance() {
@@ -36,7 +38,7 @@ public class CityModel implements Serializable, Comparable<CityModel> {
         this.distance = distance;
     }
 
-    public List<ForecastModel> getForecastModel() {
+    /*public List<ForecastModel> getForecastModel() {
 
         List<ForecastModel> out = new ArrayList<>();
         for (ForecastModel model:forecastModel) {
@@ -48,8 +50,12 @@ public class CityModel implements Serializable, Comparable<CityModel> {
     }
 
     public void setForecastModel(List<ForecastModel> forecastModel) {
+        for (ForecastModel model:forecastModel) {
+            this.forecastModel = new LazyForeignCollection<>();
+        }
+
         this.forecastModel = forecastModel;
-    }
+    }*/
 
     public String getCountry() {
         return country;
@@ -98,8 +104,6 @@ public class CityModel implements Serializable, Comparable<CityModel> {
     public void setLat(float lat) {
         this.lat = lat;
     }
-
-
 
     @Override
     public int compareTo(CityModel another) {

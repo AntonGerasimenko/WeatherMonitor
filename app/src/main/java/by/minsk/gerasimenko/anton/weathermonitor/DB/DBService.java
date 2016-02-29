@@ -38,40 +38,40 @@ public class DBService {
         return Collections.emptyList();
     }
 
+    public static List<ForecastModel> getForecast(CityModel model){
+        try {
+            Dao<ForecastModel,String>     dao = DBManager.getInstance().getHelper().getForecastDao();
+            QueryBuilder<ForecastModel, String> builder = dao.queryBuilder();
+
+            builder
+                    .orderBy("_id", false)
+                    .where()
+                    .eq("cityModel_id", model.get_id());
+
+            return dao.query(builder.prepare());
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return Collections.emptyList();
+    }
+
     public static void putCity(CityModel model) {
         try {
             Dao<CityModel,String>     dao = DBManager.getInstance().getHelper().getCityDao();
-            dao.create(model);
+            dao.createOrUpdate(model);
         } catch (SQLException e) {
             e.printStackTrace();
         }
     }
 
-    public static void putForecast(String woeid, List<ForecastModel> out) {
-        try {
-            Dao<CityModel,String>     dao = DBManager.getInstance().getHelper().getCityDao();
-            QueryBuilder<CityModel, String> builder = dao.queryBuilder();
+    public static void putForecast(CityModel model,List<ForecastModel> out) {
+        List<ForecastModel> models = getForecast(model);
+        delete(models);
 
-            builder
-                    .orderBy("_id", false)
-                    .where()
-                    .eq("woeid", woeid);
+        for (ForecastModel forecastModel: out) {
 
-            List<CityModel> models = dao.query(builder.prepare());
-            for (CityModel model:models) {
-
-                refresh(model);
-                delete(model);
-                model.setForecastModel(out);
-
-                putCity(model);
-
-
-            }
-
-
-        } catch (SQLException e) {
-            e.printStackTrace();
+            forecastModel.setCityModel(model);
+            putForecast(forecastModel);
         }
     }
 
@@ -79,6 +79,25 @@ public class DBService {
         try {
             Dao<CityModel,String>     dao = DBManager.getInstance().getHelper().getCityDao();
             dao.create(list);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+
+    public static void putForecast(ForecastModel model) {
+        try {
+            Dao<ForecastModel,String>     dao = DBManager.getInstance().getHelper().getForecastDao();
+            dao.createOrUpdate(model);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public static void delete(ForecastModel model) {
+        try {
+            Dao<ForecastModel,String>     dao = DBManager.getInstance().getHelper().getForecastDao();
+            dao.delete(model);
         } catch (SQLException e) {
             e.printStackTrace();
         }
@@ -94,11 +113,12 @@ public class DBService {
     }
 
     public static void delete(List<ForecastModel> out) {
-
-
-
-
-
+        try {
+            Dao<ForecastModel,String>     dao = DBManager.getInstance().getHelper().getForecastDao();
+            dao.delete(out);
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
     }
 
 

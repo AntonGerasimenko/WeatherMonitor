@@ -14,7 +14,7 @@ public class ForecastModel implements Serializable {
 
     @DatabaseField(generatedId =  true, dataType = DataType.INTEGER) private int _id;
 
-    @DatabaseField(foreign = true) private CityModel cityModel;
+    @DatabaseField(foreign = true, foreignAutoRefresh = true, columnName = "cityModel_id") private CityModel cityModel;
 
     @DatabaseField(dataType = DataType.STRING) private String date;
 

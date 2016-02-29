@@ -92,13 +92,13 @@ public class MainPresenter  extends AbstractPresenter implements SwipeRefreshLay
 
         for (CityModel model:list) {
 
-            getForecast(model.getWoeid());
+            getForecast(model);
         }
     }
 
-    private void getForecast(final String woeid) {
+    private void getForecast(final CityModel model) {
 
-        RestClient.getInstance().getApiServiceInterface().getWeatherForecast(false, "select * from weather.forecast where woeid=" + woeid, "json").enqueue(new Callback<WeatherForecastBody>() {
+        RestClient.getInstance().getApiServiceInterface().getWeatherForecast(false, "select * from weather.forecast where woeid=" + model.getWoeid(), "json").enqueue(new Callback<WeatherForecastBody>() {
             @Override
             public void onResponse(Response<WeatherForecastBody> response) {
                 List<Forecast> list = response.body().getQuery().getResults().getChannel().getItem().getForecast();
@@ -107,9 +107,9 @@ public class MainPresenter  extends AbstractPresenter implements SwipeRefreshLay
                     out.add(new ForecastModel(forecast));
                 }
 
-                DBService.putForecast(woeid,out);
+                DBService.putForecast(model,out);
 
-                if (!out.isEmpty()) MainPresenter.this.mView.updateList(woeid,out);
+                if (!out.isEmpty()) MainPresenter.this.mView.updateList(model.getWoeid(),out);
             }
 
             @Override
@@ -214,7 +214,6 @@ public class MainPresenter  extends AbstractPresenter implements SwipeRefreshLay
 
                 getWoeid(model);
             }
-
 
             mView.hideProgressBar();
         }

@@ -20,6 +20,7 @@ import java.util.List;
 import butterknife.Bind;
 import butterknife.ButterKnife;
 import butterknife.OnClick;
+import by.minsk.gerasimenko.anton.weathermonitor.DB.DBService;
 import by.minsk.gerasimenko.anton.weathermonitor.DB.model.ForecastModel;
 import by.minsk.gerasimenko.anton.weathermonitor.R;
 import by.minsk.gerasimenko.anton.weathermonitor.adapters.CityListApadter;
@@ -93,7 +94,7 @@ public class CitysList extends Fragment implements AdapterView.OnItemClickListen
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
         CityModel city = list.get(position);
-        List<ForecastModel> list = city.getForecastModel();
+        List<ForecastModel> list = DBService.getForecast(city);
 
         if (list != null) {
 
