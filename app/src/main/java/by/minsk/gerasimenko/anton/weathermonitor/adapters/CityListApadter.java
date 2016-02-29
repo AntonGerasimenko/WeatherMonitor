@@ -54,7 +54,7 @@ public class CityListApadter extends ArrayAdapter<CityModel>{
 
         if (list != null && !list.isEmpty()) {
 
-            ForecastModel model = list.get(0);
+            ForecastModel model = list.get(list.size()-1);
 
             holder.tvDate.setText(model.getDate());
             holder.tvHigh.setText(model.getHigh());

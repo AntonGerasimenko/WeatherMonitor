@@ -2,12 +2,14 @@ package by.minsk.gerasimenko.anton.weathermonitor;
 
 import android.Manifest;
 import android.app.Fragment;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.net.ConnectivityManager;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -77,9 +79,15 @@ public class MainActivity extends AppCompatActivity implements MainView {
             showGPSDisabledAlertToUser();
         }
 
-        presenter = new MainPresenter(this);
-
         showProgressBar();
+
+        if (!isNetworkConnected()) {
+
+            showMessage(getString(R.string.no_internet));
+            hideProgressBar();
+        }
+
+        presenter = new MainPresenter(this);
     }
 
     @Override
@@ -121,21 +129,16 @@ public class MainActivity extends AppCompatActivity implements MainView {
     }
 
     @Override
-    public void updateList(String woeid, List<ForecastModel> model) {
+    public void updateList() {
         CitysList fragment = (CitysList) getFragmentManager().findFragmentByTag(CitysList.TAG);
         if (fragment != null) {
 
             List<CityModel> list = DBService.getAll();
+            presenter.calcDistance(list);
+            Collections.sort(list);
 
-            for (CityModel city:list) {
-
-                if (woeid.equals(city.getWoeid())) {
-
-                    fragment.setList(list);
-                    fragment.updateList();
-                    return;
-                }
-            }
+            fragment.setList(list);
+            fragment.updateList();
         }
     }
 
@@ -143,8 +146,6 @@ public class MainActivity extends AppCompatActivity implements MainView {
     public void showMessage(String text) {
         Toast.makeText(this,text,Toast.LENGTH_LONG).show();
     }
-
-
 
     private void showGPSDisabledAlertToUser(){
         AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
@@ -166,5 +167,12 @@ public class MainActivity extends AppCompatActivity implements MainView {
                 });
         AlertDialog alert = alertDialogBuilder.create();
         alert.show();
+    }
+
+
+    private boolean isNetworkConnected() {
+        ConnectivityManager cm = (ConnectivityManager) getSystemService(Context.CONNECTIVITY_SERVICE);
+
+        return cm.getActiveNetworkInfo() != null;
     }
 }

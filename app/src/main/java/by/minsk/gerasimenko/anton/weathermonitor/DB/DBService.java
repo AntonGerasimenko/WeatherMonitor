@@ -14,15 +14,6 @@ import by.minsk.gerasimenko.anton.weathermonitor.DB.model.ForecastModel;
 
 public class DBService {
 
-    public static Set<Integer> getDownloadedId(){
-        Set<Integer> out = new HashSet<>();
-
-        for (CityModel city:getAll()) {
-            out.add(city.get_id());
-        }
-        return out;
-    }
-
     public static List<CityModel> getAll(){
         try {
             Dao<CityModel,String>     dao = DBManager.getInstance().getHelper().getCityDao();
@@ -76,14 +67,9 @@ public class DBService {
     }
 
     public static void putCity(List<CityModel> list) {
-        try {
-            Dao<CityModel,String>     dao = DBManager.getInstance().getHelper().getCityDao();
-            dao.create(list);
-        } catch (SQLException e) {
-            e.printStackTrace();
-        }
-    }
 
+        for (CityModel model:list) putCity(model);
+    }
 
     public static void putForecast(ForecastModel model) {
         try {
@@ -120,7 +106,6 @@ public class DBService {
             e.printStackTrace();
         }
     }
-
 
     private static  void refresh(CityModel  model) {
         /*try {

@@ -49,13 +49,13 @@ public class MainPresenter  extends AbstractPresenter implements SwipeRefreshLay
 
     @Override
     public void start() {
-
         List<CityModel> list =  DBService.getAll();
         if (list == null || list.isEmpty()) {
 
-
             new LoadStartCities().execute();
         }
+
+        locationDetect();
     }
 
     @Override
@@ -72,15 +72,9 @@ public class MainPresenter  extends AbstractPresenter implements SwipeRefreshLay
     }
 
     private void showCityList(List<CityModel> list) {
-        Location myLocation = mView.getLocation();
-        for (CityModel model:list) {
 
-            Location loc = new Location("");
-            loc.setLatitude(model.getLat());
-            loc.setLongitude(model.getLang());
-
-            model.setDistance(myLocation.distanceTo(loc) / 1000);
-        }
+        calcDistance(list);
+        DBService.putCity(list);
         Collections.sort(list);
 
         mView.showCityList(CitysList.newInstance(list, this), CitysList.TAG);
@@ -93,6 +87,21 @@ public class MainPresenter  extends AbstractPresenter implements SwipeRefreshLay
         for (CityModel model:list) {
 
             getForecast(model);
+        }
+    }
+
+    public void calcDistance(List<CityModel> list) {
+        Location myLocation = mView.getLocation();
+        if (myLocation != null) {
+            for (CityModel model:list) {
+
+                Location loc = new Location("");
+                loc.setLatitude(model.getLat());
+                loc.setLongitude(model.getLang());
+
+                model.setDistance(myLocation.distanceTo(loc) / 1000);
+                DBService.putCity(model);
+            }
         }
     }
 
@@ -109,7 +118,7 @@ public class MainPresenter  extends AbstractPresenter implements SwipeRefreshLay
 
                 DBService.putForecast(model,out);
 
-                if (!out.isEmpty()) MainPresenter.this.mView.updateList(model.getWoeid(),out);
+                if (!out.isEmpty()) MainPresenter.this.mView.updateList();
             }
 
             @Override

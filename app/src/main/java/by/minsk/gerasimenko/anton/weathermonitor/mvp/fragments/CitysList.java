@@ -15,6 +15,7 @@ import android.widget.ListView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import butterknife.Bind;
@@ -79,7 +80,11 @@ public class CitysList extends Fragment implements AdapterView.OnItemClickListen
 
     public void setList(List<CityModel> list) {
 
+
+
         this.list.clear();
+
+
         this.list.addAll(list);
     }
 
@@ -98,6 +103,7 @@ public class CitysList extends Fragment implements AdapterView.OnItemClickListen
         if (list != null) {
 
             String title = city.getCity() + " " + String.format("%.1f km", city.getDistance());
+            Collections.reverse(list);
 
             ForecastDetailDialog.newInstance(title, list)
                     .show(getFragmentManager(), "");

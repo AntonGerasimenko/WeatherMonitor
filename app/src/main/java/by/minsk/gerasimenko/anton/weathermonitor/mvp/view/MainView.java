@@ -17,6 +17,6 @@ public interface MainView  {
     void showCityList(Fragment f, String tag);
     Location  getLocation();
 
-    void updateList(String woeid, List<ForecastModel> model);
+    void updateList();
     void showMessage(String text);
 }
