@@ -68,7 +68,7 @@ public class MainPresenter  extends AbstractPresenter implements SwipeRefreshLay
         if (list != null && !list.isEmpty()) {
 
             showCityList(list);
-        }
+        } else mView.showCityList(CitysList.newInstance(list, this), CitysList.TAG);
     }
 
     private void showCityList(List<CityModel> list) {
