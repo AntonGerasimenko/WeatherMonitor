@@ -132,7 +132,6 @@ public class MainPresenter  extends AbstractPresenter implements SwipeRefreshLay
                 JsonElement place = results.get("place");
 
                 String woied;
-
                 if (place.isJsonArray()) {
 
                     woied = ((JsonObject)((JsonArray) place).get(0)).get("woeid").getAsString();
@@ -140,9 +139,8 @@ public class MainPresenter  extends AbstractPresenter implements SwipeRefreshLay
                     woied = ((JsonObject) place).get("woeid").getAsString();
                 }
                 model.setWoeid(woied);
-
                 DBService.putCity(model);
-
+                getForecast(model);
             }
 
             @Override

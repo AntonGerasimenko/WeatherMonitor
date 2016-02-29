@@ -71,15 +71,16 @@ public class CitysList extends Fragment implements AdapterView.OnItemClickListen
         return view;
     }
 
-
     @Override
     public void onDestroy() {
         ButterKnife.unbind(this);
         super.onDestroy();
     }
 
-    public List<CityModel> getList() {
-        return list;
+    public void setList(List<CityModel> list) {
+
+        this.list.clear();
+        this.list.addAll(list);
     }
 
     public void updateList(){
@@ -87,8 +88,6 @@ public class CitysList extends Fragment implements AdapterView.OnItemClickListen
         if (listView!= null && listView.getAdapter()!=null)
         ((ArrayAdapter) listView.getAdapter()).notifyDataSetChanged();
     }
-
-
 
     @Override
     public void onItemClick(AdapterView<?> parent, View view, int position, long id) {

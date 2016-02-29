@@ -2,10 +2,13 @@ package by.minsk.gerasimenko.anton.weathermonitor;
 
 import android.Manifest;
 import android.app.Fragment;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +22,7 @@ import java.util.List;
 
 import butterknife.Bind;
 import butterknife.ButterKnife;
+import by.minsk.gerasimenko.anton.weathermonitor.DB.DBService;
 import by.minsk.gerasimenko.anton.weathermonitor.DB.model.CityModel;
 import by.minsk.gerasimenko.anton.weathermonitor.DB.model.ForecastModel;
 import by.minsk.gerasimenko.anton.weathermonitor.mvp.fragments.CitysList;
@@ -68,6 +72,11 @@ public class MainActivity extends AppCompatActivity implements MainView {
         mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER,30 *60*1000l,
                 1000.0f, mLocationListener);
 
+        if (!mLocationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+
+            showGPSDisabledAlertToUser();
+        }
+
         presenter = new MainPresenter(this);
 
         showProgressBar();
@@ -116,12 +125,13 @@ public class MainActivity extends AppCompatActivity implements MainView {
         CitysList fragment = (CitysList) getFragmentManager().findFragmentByTag(CitysList.TAG);
         if (fragment != null) {
 
-            List<CityModel> list = fragment.getList();
+            List<CityModel> list = DBService.getAll();
 
             for (CityModel city:list) {
 
                 if (woeid.equals(city.getWoeid())) {
 
+                    fragment.setList(list);
                     fragment.updateList();
                     return;
                 }
@@ -136,5 +146,25 @@ public class MainActivity extends AppCompatActivity implements MainView {
 
 
 
-
+    private void showGPSDisabledAlertToUser(){
+        AlertDialog.Builder alertDialogBuilder = new AlertDialog.Builder(this);
+        alertDialogBuilder.setMessage("GPS is disabled in your device. Would you like to enable it?")
+                .setCancelable(false)
+                .setPositiveButton("Goto Settings Page To Enable GPS",
+                        new DialogInterface.OnClickListener(){
+                            public void onClick(DialogInterface dialog, int id){
+                                Intent callGPSSettingIntent = new Intent(
+                                        android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                                startActivity(callGPSSettingIntent);
+                            }
+                        });
+        alertDialogBuilder.setNegativeButton("Cancel",
+                new DialogInterface.OnClickListener(){
+                    public void onClick(DialogInterface dialog, int id){
+                        dialog.cancel();
+                    }
+                });
+        AlertDialog alert = alertDialogBuilder.create();
+        alert.show();
+    }
 }
